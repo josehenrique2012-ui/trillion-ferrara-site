@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="escuro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Site de demonstração</title>
+  <meta name="description" content="">
+  <meta name="theme-color" content="#07080D">
+  <meta name="color-scheme" content="dark">
+  <meta name="robots" content="noindex, nofollow">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:title" content="">
+  <meta property="og:description" content="">
+  <meta property="og:image" content="">
+  <meta property="og:url" content="">
+  <meta property="og:site_name" content="">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="">
+  <meta name="twitter:description" content="">
+  <meta name="twitter:image" content="">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="config.js"></script>
+  <script>
+    (function () {
+      var C = window.SITE_CONFIG || {};
+      var r = document.documentElement;
+      if (C.cores) {
+        if (C.cores.primaria) {
+          r.style.setProperty("--cor-primaria", C.cores.primaria);
+          var h = String(C.cores.primaria).replace("#","");
+          if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+          if (h.length === 6) {
+            var n = parseInt(h, 16);
+            var R = (n>>16)&255, G = (n>>8)&255, B = n&255;
+            r.style.setProperty("--cor-primaria-rgb", R+", "+G+", "+B);
+            var lum = (0.2126*(R/255)+0.7152*(G/255)+0.0722*(B/255));
+            if (lum < 0.28) {
+              var L = function(c){ return Math.round(c+(255-c)*0.58); };
+              r.style.setProperty("--cor-acao", "rgb("+L(R)+", "+L(G)+", "+L(B)+")");
+            } else {
+              r.style.setProperty("--cor-acao", C.cores.primaria);
+            }
+          }
+        }
+        if (C.cores.secundaria) r.style.setProperty("--cor-secundaria", C.cores.secundaria);
+      }
+      var titulo = (C.seo && C.seo.titulo) || (C.nome ? (C.nome + (C.cidade ? " | " + C.cidade : "")) : "Site de demonstração");
+      document.title = titulo;
+    })();
+  </script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+  <noscript>
+    <div class="noscript">Ative o JavaScript para visualizar este site.</div>
+  </noscript>
+
+  <header class="header" id="topo">
+    <div class="container header__inner">
+      <a class="brand" href="#topo">
+        <img class="brand__logo" data-bind="logo" alt="" hidden>
+        <span class="brand__mark" data-bind="iniciais" aria-hidden="true"></span>
+        <span class="brand__name" data-bind="nome"></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav" id="menu-principal">
+        <ul class="nav__list">
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#diferenciais">Diferenciais</a></li>
+          <li><a href="#depoimentos" data-bind="depoimentos-nav">Depoimentos</a></li>
+          <li><a href="#galeria">Galeria</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+        <a class="btn btn--whatsapp btn--sm" data-bind="whatsapp-link" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero" id="inicio">
+      <div class="hero__media">
+        <img data-bind="hero-imagem" alt="">
+      </div>
+      <div class="hero__overlay"></div>
+      <div class="container hero__content">
+        <p class="eyebrow" data-bind="segmento-cidade"></p>
+        <h1 data-bind="headline"></h1>
+        <p class="hero__sub" data-bind="subheadline"></p>
+        <div class="hero__actions">
+          <a class="btn btn--whatsapp" data-bind="whatsapp-link" target="_blank" rel="noopener noreferrer">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.5 3.5A11 11 0 0 0 2.1 16.7L1 23l6.4-1.1A11 11 0 0 0 12 23a11 11 0 0 0 8.5-19.5zM12 21a9 9 0 0 1-4.6-1.3l-.3-.2-3.8.7.7-3.7-.2-.3A9 9 0 1 1 12 21zm5-6.7c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6.1a7.4 7.4 0 0 1-2.2-1.4 8.1 8.1 0 0 1-1.5-1.9c-.2-.3 0-.4.1-.6l.3-.4.2-.3a.5.5 0 0 0 0-.5c0-.1-.6-1.4-.8-1.9s-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.6 11.4 11.4 0 0 0 4.4 3.9 15 15 0 0 0 1.5.5 3.6 3.6 0 0 0 1.6.1 2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.6-.3z"/></svg>
+            <span data-bind="cta-texto">Falar no WhatsApp</span>
+          </a>
+          <a class="btn btn--ghost" href="#servicos">Ver serviços</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sobre">
+      <div class="container split">
+        <div class="split__media">
+          <img data-bind="sobre-imagem" alt="">
+        </div>
+        <div class="split__body">
+          <p class="eyebrow">Sobre</p>
+          <h2 data-bind="sobre-titulo">Nossa história</h2>
+          <p class="lead" data-bind="sobre"></p>
+          <a class="btn btn--primary" data-bind="whatsapp-link" target="_blank" rel="noopener noreferrer">Falar com a gente</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tint" id="servicos">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow">O que fazemos</p>
+          <h2>Serviços</h2>
+        </header>
+        <div class="cards" data-bind="servicos"></div>
+      </div>
+    </section>
+
+    <section class="section" id="diferenciais">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow">Por que escolher</p>
+          <h2>Nossos diferenciais</h2>
+        </header>
+        <div class="features" data-bind="diferenciais"></div>
+      </div>
+    </section>
+
+    <section class="section section--tint" id="depoimentos">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow" data-bind="depoimentos-eyebrow">Quem já passou por aqui</p>
+          <h2 data-bind="depoimentos-titulo">Depoimentos</h2>
+        </header>
+        <div class="quotes" data-bind="depoimentos"></div>
+        <div class="process" data-bind="processo" hidden></div>
+      </div>
+    </section>
+
+    <section class="section" id="galeria">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow">Um pouco do nosso dia a dia</p>
+          <h2>Galeria</h2>
+        </header>
+        <div class="gallery" data-bind="galeria"></div>
+      </div>
+    </section>
+
+    <section class="section" id="contato">
+      <div class="container">
+        <header class="section__head">
+          <p class="eyebrow">Fale com a gente</p>
+          <h2>Contato</h2>
+        </header>
+        <div class="contact" data-bind="contato"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <strong data-bind="nome"></strong>
+        <p data-bind="atendimento">Atendimento remoto em todo o Brasil</p>
+      </div>
+      <p class="footer__copy">
+        © <span data-bind="ano"></span> <span data-bind="nome"></span>.
+        Todos os direitos reservados.
+      </p>
+      <p class="footer__credit">
+        <span data-bind="agencia">Trillion Ferrara</span>
+        — grupo JHF · origem em <span data-bind="agencia-cidade">Maringá-PR</span>
+      </p>
+    </div>
+  </footer>
+
+  <a class="whatsapp-float" data-bind="whatsapp-link" target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.5 3.5A11 11 0 0 0 2.1 16.7L1 23l6.4-1.1A11 11 0 0 0 12 23a11 11 0 0 0 8.5-19.5zM12 21a9 9 0 0 1-4.6-1.3l-.3-.2-3.8.7.7-3.7-.2-.3A9 9 0 1 1 12 21zm5-6.7c-.3-.1-1.6-.8-1.9-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6.1a7.4 7.4 0 0 1-2.2-1.4 8.1 8.1 0 0 1-1.5-1.9c-.2-.3 0-.4.1-.6l.3-.4.2-.3a.5.5 0 0 0 0-.5c0-.1-.6-1.4-.8-1.9s-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.6 11.4 11.4 0 0 0 4.4 3.9 15 15 0 0 0 1.5.5 3.6 3.6 0 0 0 1.6.1 2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.6-.3z"/></svg>
+  </a>
+
+  <div class="lightbox" hidden>
+    <button type="button" class="lightbox__close" aria-label="Fechar imagem">&times;</button>
+    <img alt="">
+  </div>
+</body>
+</html>
