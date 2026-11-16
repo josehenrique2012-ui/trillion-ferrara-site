@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07080D"/>
+      <stop offset="100%" stop-color="#0B1220"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)"/><circle cx="216" cy="138" r="214" fill="#3EE0C2" opacity="0.28"/><circle cx="1032" cy="441" r="239" fill="#8EA2FF" opacity="0.2"/><circle cx="744" cy="113" r="88" fill="#ffffff" opacity="0.07"/><path d="M-40 453 L540 252 L1240 390" fill="none" stroke="#3EE0C2" stroke-opacity="0.28" stroke-width="1.2"/><path d="M-20 535 L660 327 L1220 491" fill="none" stroke="#8EA2FF" stroke-opacity="0.22" stroke-width="1.2"/><text x="600" y="315" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="42" font-weight="600">Trillion Ferrara</text>
+</svg>
