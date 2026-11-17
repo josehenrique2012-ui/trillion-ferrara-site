@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AprumAI — Seu WhatsApp atendendo na hora</title>
+  <meta name="description" content="A AprumAI coloca um agente de IA no WhatsApp da sua empresa para responder clientes, tirar dúvidas e organizar os contatos para a sua equipe. Teste grátis antes de decidir.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #05080F;
+      --navy: #0B1220;
+      --navy-2: #101828;
+      --white: #FFFFFF;
+      --gray: #F4F6FA;
+      --green: #25D366;
+      --green-hover: #1FBA5A;
+      --blue: #3B82F6;
+      --text: #F2F5FA;
+      --muted: #B4BDD0;
+      --pending-bg: #2A2410;
+      --pending-border: #C4A035;
+      --pending-text: #F3E3A8;
+      --glass: rgba(255,255,255,0.045);
+      --glass-border: rgba(255,255,255,0.10);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --header-h: 64px;
+      --fab-size: 60px;
+      --glow: 0 8px 28px rgba(37, 211, 102, 0.32);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+    button, .btn { font-family: inherit; }
+
+    h1, h2, h3, .price, .price-installments, .price-cash {
+      font-family: "Space Grotesk", Inter, sans-serif;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+    }
+    .mono, .kicker, .eyebrow, .step-num, .who-tag, .bubble .who-label,
+    .pay-badge, .status-tag, .placeholder-label, .video-label, .seal span {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    .wrap { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
+    .visually-hidden {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* Header */
+    .header {
+      position: sticky; top: 0; z-index: 40;
+      height: var(--header-h);
+      background: rgba(5, 8, 15, 0.78);
+      backdrop-filter: blur(18px) saturate(1.2);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .header-inner {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto; height: 100%;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .logo-chip {
+      display: flex; align-items: center;
+      background: #fff;
+      border-radius: 12px;
+      padding: 4px 10px 4px 6px;
+      height: 44px;
+    }
+    .logo { height: 34px; width: auto; max-width: 200px; object-fit: contain; object-position: left center; }
+    .btn.header-cta { display: none; }
+
+    /* Buttons — all solid green */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 54px; padding: 14px 24px; border-radius: 999px;
+      font-size: 16px; font-weight: 700; text-decoration: none;
+      border: 0; cursor: pointer; text-align: center;
+      background: var(--green); color: var(--navy);
+      box-shadow: var(--glow);
+      transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
+    }
+    .btn:hover { background: var(--green-hover); transform: translateY(-1px); }
+    .btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    .btn-lg { min-height: 58px; padding: 16px 28px; font-size: 17px; width: 100%; }
+    .btn-full { width: 100%; }
+
+    /* Hero */
+    .hero {
+      background: var(--bg);
+      padding: 20px 0 56px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before, .hero::after {
+      content: ""; position: absolute; pointer-events: none; border-radius: 50%;
+    }
+    .hero::before {
+      width: 520px; height: 520px; right: -160px; top: -80px;
+      background: radial-gradient(circle, rgba(59,130,246,0.28), transparent 68%);
+    }
+    .hero::after {
+      width: 380px; height: 380px; left: -120px; bottom: -80px;
+      background: radial-gradient(circle, rgba(37,211,102,0.16), transparent 68%);
+    }
+    .hero-grid {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 16px; text-align: center;
+    }
+    .hero-copy { width: 100%; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #BFDBFE; margin-bottom: 14px;
+    }
+    .eyebrow .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(37,211,102,0.18);
+    }
+    .hero h1 {
+      font-size: clamp(1.55rem, 6vw, 3.35rem); font-weight: 700;
+      max-width: 18ch; margin: 0 auto 10px; color: #fff;
+    }
+    .hero .sub {
+      font-size: 16px; line-height: 1.45; color: var(--muted);
+      max-width: 36em; margin: 0 auto;
+    }
+    .device-wrap { margin: 4px 0 0; position: relative; }
+    .device-glow {
+      position: absolute; inset: -30px; pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(59,130,246,0.35), transparent 60%),
+        radial-gradient(circle at 50% 80%, rgba(37,211,102,0.22), transparent 55%);
+      filter: blur(8px);
+    }
+    .device {
+      width: 178px; aspect-ratio: 9 / 16;
+      background: linear-gradient(180deg, #1A2438 0%, #0C1220 100%);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 28px;
+      box-shadow:
+        0 0 0 1px rgba(59,130,246,0.18),
+        0 24px 50px rgba(0,0,0,0.45),
+        inset 0 0 0 2px #070B14;
+      position: relative; overflow: hidden; margin: 0 auto;
+    }
+    .device-notch {
+      position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      width: 72px; height: 8px; background: #05080F; border-radius: 8px; z-index: 2;
+    }
+    .device-screen {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 28px 14px 16px; gap: 12px;
+    }
+    .status-tag {
+      font-size: 9px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--green);
+      background: rgba(37,211,102,0.1);
+      border: 1px solid rgba(37,211,102,0.28);
+      border-radius: 999px; padding: 3px 8px;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .status-tag i {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+      box-shadow: 0 0 8px var(--green); font-style: normal;
+    }
+    .chat-preview { width: 100%; display: flex; flex-direction: column; gap: 7px; opacity: 0.7; pointer-events: none; }
+    .chat-preview .b { min-height: 22px; border-radius: 10px; padding: 5px 8px; font-size: 8px; line-height: 1.3; color: #E8EEF8; text-align: left; }
+    .chat-preview .in { background: rgba(255,255,255,0.08); align-self: flex-start; width: 72%; border-bottom-left-radius: 3px; }
+    .chat-preview .out { background: rgba(59,130,246,0.75); align-self: flex-end; width: 70%; border-bottom-right-radius: 3px; }
+    .play-btn {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--green); color: var(--navy); border: 0;
+      display: grid; place-items: center;
+      box-shadow: 0 10px 24px rgba(37,211,102,0.45);
+      flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .play-btn svg { margin-left: 3px; }
+    .video-label {
+      position: relative; z-index: 1;
+      font-size: 9px; font-weight: 500; letter-spacing: 0.02em; line-height: 1.35;
+      color: #E8EEF8;
+      background: rgba(5,8,15,0.78);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px; padding: 6px 8px; max-width: 100%;
+    }
+    .hero-cta { width: calc(100% - 76px); max-width: 420px; margin-top: 8px; align-self: start; }
+
+    /* Sections */
+    section { padding: 64px 0; position: relative; }
+    .kicker {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #BFDBFE; margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.45rem, 4vw, 2.15rem); font-weight: 700;
+      margin-bottom: 16px; max-width: 22em; color: #fff;
+    }
+    .lede { color: var(--muted); font-size: 16px; max-width: 38em; margin-bottom: 28px; }
+    .center { text-align: center; }
+    .center .lede, .center .section-title, .center .kicker { margin-inline: auto; }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius);
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.04);
+    }
+
+    /* Pain */
+    .pain { background: var(--navy); }
+    .cards-3 { display: grid; gap: 14px; }
+    .card { padding: 22px; }
+    .icon-wrap {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: grid; place-items: center;
+      background: rgba(59,130,246,0.12);
+      color: #BFDBFE; margin-bottom: 14px;
+      border: 1px solid rgba(59,130,246,0.2);
+    }
+    .card h3 { font-size: 1.05rem; font-weight: 600; color: #fff; }
+    .pain-close {
+      margin: 24px auto 0; text-align: center; font-weight: 500;
+      color: #E8EDF5; font-size: 16px; max-width: 30em;
+    }
+    .pain-close em { font-style: normal; color: var(--muted); display: block; margin-top: 8px; }
+
+    /* Steps */
+    .steps { display: grid; gap: 12px; }
+    .step {
+      display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: start;
+      padding: 18px;
+    }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 14px;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.28);
+      color: #fff; display: grid; place-items: center;
+      font-size: 0.95rem; font-weight: 600; letter-spacing: 0.04em;
+    }
+    .step p { font-size: 16px; font-weight: 500; padding-top: 14px; color: #F2F5FA; }
+    .note { margin-top: 18px; color: var(--muted); font-size: 14px; }
+
+    /* Who */
+    .who { background: var(--navy); }
+    .who-grid { display: grid; gap: 16px; }
+    .who-card { padding: 18px; }
+    .who-card header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .who-card h3 { font-size: 1.1rem; color: #fff; }
+    .who-tag {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+      color: #BFDBFE; background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.22);
+      border-radius: 999px; padding: 3px 8px;
+    }
+    .who-line { color: var(--muted); font-size: 14px; margin: -6px 0 12px; }
+    .mini-chat {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .bubble { max-width: 90%; padding: 10px 12px; border-radius: 14px; font-size: 14px; line-height: 1.45; }
+    .bubble.client {
+      align-self: flex-start; background: rgba(255,255,255,0.07);
+      color: #E8EDF5; border-bottom-left-radius: 4px;
+    }
+    .bubble.agent {
+      align-self: flex-end; background: var(--blue); color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .bubble .who-label {
+      display: block; font-size: 9px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 3px; opacity: 0.75;
+    }
+
+    /* Checklist */
+    .checks { list-style: none; display: grid; gap: 10px; max-width: 760px; }
+    .checks li {
+      display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start;
+      font-size: 16px; padding: 14px 16px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+      border-radius: 14px; color: #E8EDF5;
+    }
+    .hint {
+      margin-top: 16px; color: var(--muted); font-size: 15px; max-width: 40em;
+    }
+
+    /* Demo */
+    .demo { background: var(--navy); }
+    .demo-list { list-style: none; display: grid; gap: 10px; max-width: 640px; margin: 0 auto 24px; text-align: left; }
+    .demo-list li {
+      display: grid; grid-template-columns: 22px 1fr; gap: 12px;
+      padding: 12px 14px; border-radius: 14px;
+      background: var(--glass); border: 1px solid var(--glass-border);
+    }
+
+    /* Offer */
+    .offer {
+      background: var(--bg);
+      overflow: hidden;
+    }
+    .offer::before {
+      content: ""; position: absolute; width: 500px; height: 500px;
+      left: 50%; top: 0; transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(37,211,102,0.14), transparent 65%);
+      pointer-events: none;
+    }
+    .offer-card {
+      position: relative;
+      background: #fff; color: var(--navy);
+      border-radius: 28px; padding: 28px 22px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35), 0 0 0 1px rgba(37,211,102,0.15);
+    }
+    .offer-card .kicker { color: #2563EB; }
+    .offer-card .section-title { color: var(--navy); }
+    .pay-options { margin: 8px 0 24px; }
+    .pay-option-featured {
+      background: #F0FBF4;
+      border: 1.5px solid var(--green);
+      border-radius: 18px; padding: 18px 20px;
+    }
+    .pay-badge {
+      display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--navy); background: var(--green);
+      border-radius: 999px; padding: 4px 10px; margin-bottom: 6px;
+    }
+    .price { font-size: clamp(1.5rem, 5.4vw, 2.1rem); font-weight: 700; margin: 6px 0 0; color: var(--navy); }
+    .price-installments {
+      font-size: clamp(1.2rem, 4.4vw, 1.65rem); font-weight: 700;
+      margin-top: 4px; letter-spacing: -0.02em; line-height: 1.25;
+    }
+    .pay-or { text-align: center; color: #5B6578; font-weight: 600; margin: 12px 0 8px; }
+    .price-cash {
+      font-size: 1.2rem; font-weight: 700; text-align: center; color: var(--navy);
+      padding: 10px 12px; border: 1px solid #E8ECF2; border-radius: 14px; background: var(--gray);
+    }
+    .offer-card .checks li { background: var(--gray); border: 0; color: var(--navy); }
+    .offer-card .btn { margin-top: 22px; }
+    .offer-note {
+      margin: 14px 0 0; font-size: 14px; color: #3A4458; font-weight: 500; text-align: center;
+    }
+
+    /* Guarantee */
+    .guarantee-row {
+      display: flex; gap: 20px; align-items: center;
+      margin-top: 20px; padding: 22px;
+      background: rgba(37,211,102,0.06);
+      border: 1px solid rgba(37,211,102,0.28);
+      border-radius: var(--radius);
+      box-shadow: 0 0 40px rgba(37,211,102,0.08);
+    }
+    .seal {
+      flex-shrink: 0; width: 96px; height: 96px; border-radius: 50%;
+      border: 2px solid var(--green);
+      display: grid; place-items: center; text-align: center;
+      background: radial-gradient(circle, rgba(37,211,102,0.16), rgba(11,18,32,0.9));
+      color: #fff;
+      box-shadow: 0 0 0 6px rgba(37,211,102,0.12), 0 0 24px rgba(37,211,102,0.2);
+    }
+    .seal span {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; line-height: 1.25; max-width: 72px;
+    }
+    .guarantee-row h2 { color: #fff; margin-bottom: 8px; }
+    .guarantee-row p { color: #E8EDF5; font-size: 16px; }
+
+    /* FAQ */
+    .faq { background: var(--navy); }
+    .accordion { display: grid; gap: 10px; }
+    details {
+      background: var(--glass); border-radius: var(--radius-sm);
+      border: 1px solid var(--glass-border); padding: 4px 18px;
+    }
+    summary {
+      cursor: pointer; font-weight: 600; font-family: "Space Grotesk", sans-serif;
+      font-size: 16px; list-style: none; display: flex; align-items: center;
+      justify-content: space-between; gap: 12px; min-height: 56px; line-height: 1.35; color: #fff;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: ""; width: 10px; height: 10px;
+      border-right: 1.5px solid #E8EDF5; border-bottom: 1.5px solid #E8EDF5;
+      transform: rotate(45deg); flex-shrink: 0; transition: transform .2s ease; margin-top: -4px;
+    }
+    details[open] summary::after { transform: rotate(225deg); margin-top: 4px; }
+    details p { padding: 0 0 18px; color: var(--muted); }
+    details .pending-answer {
+      color: var(--pending-text); background: var(--pending-bg);
+      border: 1px dashed var(--pending-border);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 18px;
+    }
+
+    /* Final */
+    .final { background: var(--bg); text-align: center; overflow: hidden; }
+    .final::before {
+      content: ""; position: absolute; width: 600px; height: 400px; left: 50%; top: -40px;
+      transform: translateX(-50%); pointer-events: none;
+      background: radial-gradient(circle, rgba(59,130,246,0.18), transparent 65%);
+    }
+    .final h2 {
+      font-size: clamp(1.6rem, 4.5vw, 2.5rem); font-weight: 700;
+      margin-bottom: 24px; color: #fff;
+    }
+    .final .btn { width: min(100%, 420px); }
+    .final .btn + p { margin-top: 14px; }
+    .cta-pair { display: grid; gap: 12px; }
+    .cta-pair .btn { width: 100%; }
+    .center .cta-pair { margin-inline: auto; }
+
+    /* Footer */
+    .footer {
+      background: #03050A; color: #A8B0C2;
+      padding: 40px 0 120px; font-size: 14px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .footer strong { color: #fff; font-family: "Space Grotesk", sans-serif; }
+    .footer a { color: #D5DBE6; text-decoration: underline; text-underline-offset: 3px; }
+    .footer p { margin-bottom: 8px; }
+    .footer .legal { margin-top: 18px; color: #7E8798; }
+
+    /* FAB */
+    .fab {
+      position: fixed;
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+      width: var(--fab-size); height: var(--fab-size); border-radius: 50%;
+      background: var(--green); color: var(--navy);
+      display: grid; place-items: center;
+      box-shadow: 0 10px 24px rgba(37,211,102,0.45);
+      z-index: 50; text-decoration: none;
+    }
+    .fab:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+    .fab:hover { background: var(--green-hover); }
+
+    @media (min-width: 768px) {
+      .header { --header-h: 72px; }
+      .btn.header-cta { display: inline-flex; min-height: 44px; padding: 8px 18px; font-size: 14px; width: auto; }
+      .logo { height: 38px; max-width: 230px; }
+      .logo-chip { height: 50px; }
+      .hero { padding: 56px 0 80px; }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas: "copy device" "cta device";
+        align-items: center; text-align: left; justify-items: start;
+        gap: 20px 56px;
+      }
+      .hero-copy { grid-area: copy; }
+      .device-wrap { grid-area: device; }
+      .hero-cta { grid-area: cta; margin-top: 8px; width: auto; min-width: 280px; align-self: start; }
+      .hero h1 { margin-left: 0; font-size: 3.15rem; }
+      .hero .sub { margin-left: 0; line-height: 1.55; }
+      .device { width: 240px; }
+      .play-btn { width: 68px; height: 68px; }
+      .chat-preview .b { font-size: 10px; min-height: 26px; }
+      .video-label { font-size: 10px; }
+      .cards-3, .who-grid { grid-template-columns: repeat(3, 1fr); }
+      .steps { grid-template-columns: 1fr 1fr; }
+      .cta-pair { grid-template-columns: 1fr; max-width: 420px; }
+      .offer-card { padding: 40px 44px; max-width: 720px; margin: 0 auto; }
+      .btn-lg { width: auto; min-width: 280px; }
+      .offer-card .btn-lg, .final .btn { width: 100%; }
+      .final .btn { width: min(100%, 420px); }
+      section { padding: 80px 0; }
+      .footer { padding-bottom: 64px; }
+      .guarantee-row { max-width: 720px; margin: 20px auto 0; padding: 28px 32px; }
+    }
+    @media (min-width: 1024px) {
+      .steps { grid-template-columns: repeat(4, 1fr); }
+      .step { grid-template-columns: 1fr; justify-items: start; min-height: 100%; }
+      .step p { padding-top: 4px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="#topo" class="logo-chip" aria-label="AprumAI — início">
+        <img class="logo" src="logo-aprumai.jpg" width="1180" height="456" alt="AprumAI">
+      </a>
+      <a class="btn header-cta" href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20meu%20teste%20gr%C3%A1tis%20do%20agente%20de%20IA%20no%20WhatsApp." target="_blank" rel="noopener noreferrer">Quero meu teste grátis</a>
+    </div>
+  </header>
+
+  <main id="topo">
+    <section class="hero" id="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="dot" aria-hidden="true"></span> Assessoria AprumAI</p>
+          <h1>Seu WhatsApp atendendo na hora, até quando você não pode.</h1>
+          <p class="sub">A AprumAI coloca um agente de IA no WhatsApp da sua empresa para responder clientes, tirar dúvidas e organizar os contatos para a sua equipe. Teste grátis antes de decidir.</p>
+        </div>
+        <div class="device-wrap">
+          <div class="device-glow" aria-hidden="true"></div>
+          <div class="device" role="img" aria-label="Vídeo 30s: robô respondendo no WhatsApp">
+            <div class="device-notch" aria-hidden="true"></div>
+            <div class="device-screen">
+              <span class="status-tag"><i></i> online</span>
+              <div class="chat-preview" aria-hidden="true">
+                <span class="b in">Quanto custa? Que horas abre?</span>
+                <span class="b out">Posso te ajudar com isso agora.</span>
+                <span class="b in">Ainda está disponível?</span>
+                <span class="b out">Vou verificar e já te retorno.</span>
+              </div>
+              <div class="play-btn" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72L19.5 12 8 5.14z"/></svg>
+              </div>
+              <p class="video-label">Vídeo 30s: robô respondendo no WhatsApp</p>
+            </div>
+          </div>
+        </div>
+        <a class="btn btn-lg hero-cta" href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20meu%20teste%20gr%C3%A1tis%20do%20agente%20de%20IA%20no%20WhatsApp." target="_blank" rel="noopener noreferrer">Quero meu teste grátis</a>
+      </div>
+    </section>
+
+    <section class="pain" id="dor">
+      <div class="wrap">
+        <p class="kicker">A dor</p>
+        <h2 class="section-title visually-hidden">A dor</h2>
+        <div class="cards-3">
+          <article class="card glass">
+            <div class="icon-wrap" aria-hidden="true">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h3>Mensagem chegando enquanto você atende.</h3>
+          </article>
+          <article class="card glass">
+            <div class="icon-wrap" aria-hidden="true">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </div>
+            <h3>Cliente perguntando preço às 23h.</h3>
+          </article>
+          <article class="card glass">
+            <div class="icon-wrap" aria-hidden="true">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 2v4h4"/><path d="M21 6A9 9 0 0 0 7.5 5.5L3 10"/><path d="M7 22v-4H3"/><path d="M3 18a9 9 0 0 0 13.5.5L21 14"/></svg>
+            </div>
+            <h3>As mesmas dúvidas o dia todo.</h3>
+          </article>
+        </div>
+        <p class="pain-close">Quem demora pra responder pode perder o cliente pra quem responde primeiro.<em>Cliente sem resposta não reclama. Ele só some.</em></p>
+      </div>
+    </section>
+
+    <section id="como-funciona">
+      <div class="wrap">
+        <p class="kicker">Os passos</p>
+        <h2 class="section-title">Como funciona</h2>
+        <div class="steps">
+          <article class="step glass">
+            <div class="step-num">01</div>
+            <p>Você testa grátis no seu WhatsApp.</p>
+          </article>
+          <article class="step glass">
+            <div class="step-num">02</div>
+            <p>A gente conversa 20 minutos sobre a sua empresa.</p>
+          </article>
+          <article class="step glass">
+            <div class="step-num">03</div>
+            <p>Nós configuramos o agente com as suas informações.</p>
+          </article>
+          <article class="step glass">
+            <div class="step-num">04</div>
+            <p>Você aprova e o agente começa a atender.</p>
+          </article>
+        </div>
+        <p class="note">Depois de aprovado, o agente contratado fica pronto em 10 a 20 dias úteis. Testamos junto com você antes de ligar para os clientes.</p>
+      </div>
+    </section>
+
+    <section class="who" id="para-quem">
+      <div class="wrap">
+        <p class="kicker">Para quem é</p>
+        <h2 class="section-title">Clínicas, imobiliárias, lojas e pequenas empresas que atendem pelo WhatsApp e não têm tempo pra responder tudo.</h2>
+        <div class="who-grid">
+          <article class="who-card glass">
+            <header>
+              <div class="icon-wrap" aria-hidden="true" style="margin:0">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M19 21V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v14"/><path d="M3 21h18"/><path d="M9 21v-6h6v6"/><path d="M9 10h.01M15 10h.01"/></svg>
+              </div>
+              <div>
+                <h3>Clínica</h3>
+                <span class="who-tag">Exemplo de conversa</span>
+              </div>
+            </header>
+            <p class="who-line">Mostra horários, agenda e tira dúvidas simples. Não dá diagnóstico.</p>
+            <div class="mini-chat" aria-label="Exemplo de conversa em uma clínica">
+              <div class="bubble client"><span class="who-label">Cliente</span>Tem horário amanhã de manhã?</div>
+              <div class="bubble agent"><span class="who-label">Agente</span>Sim. Tenho horários amanhã de manhã. Prefere no começo ou mais perto do meio-dia?</div>
+            </div>
+          </article>
+          <article class="who-card glass">
+            <header>
+              <div class="icon-wrap" aria-hidden="true" style="margin:0">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+              </div>
+              <div>
+                <h3>Imobiliária</h3>
+                <span class="who-tag">Exemplo de conversa</span>
+              </div>
+            </header>
+            <p class="who-line">Responde sobre o imóvel e pergunta o que o cliente procura.</p>
+            <div class="mini-chat" aria-label="Exemplo de conversa em uma imobiliária">
+              <div class="bubble client"><span class="who-label">Cliente</span>Esse imóvel ainda está disponível?</div>
+              <div class="bubble agent"><span class="who-label">Agente</span>Posso te ajudar. Qual faixa de preço e bairro você procura?</div>
+            </div>
+          </article>
+          <article class="who-card glass">
+            <header>
+              <div class="icon-wrap" aria-hidden="true" style="margin:0">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 2 3 7v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-3-5H6z"/><path d="M3 7h18"/><path d="M16 11a4 4 0 0 1-8 0"/></svg>
+              </div>
+              <div>
+                <h3>Loja</h3>
+                <span class="who-tag">Exemplo de conversa</span>
+              </div>
+            </header>
+            <p class="who-line">Informa preço e disponibilidade, e organiza o contato para a equipe.</p>
+            <div class="mini-chat" aria-label="Exemplo de conversa em uma loja">
+              <div class="bubble client"><span class="who-label">Cliente</span>Vocês têm esse produto?</div>
+              <div class="bubble agent"><span class="who-label">Agente</span>Vou verificar pra você. Me passa seu nome e o melhor horário pra te retornar?</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="o-que-voce-recebe">
+      <div class="wrap">
+        <p class="kicker">O que você recebe</p>
+        <h2 class="section-title">A AprumAI é um agente de IA configurado com as informações da sua empresa. Ele:</h2>
+        <ul class="checks">
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>responde na hora, de dia, de noite e no fim de semana;</span></li>
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>tira as dúvidas mais comuns;</span></li>
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>pega nome e interesse do cliente;</span></li>
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>passa a conversa pra sua equipe quando precisa de gente.</span></li>
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A Trillion configura o agente com todo o suporte e a mentalidade da casa, para ele funcionar e trazer o resultado que cada cliente quer, focado na dor de cada um.</span></li>
+        </ul>
+        <p class="hint">Não é aquele chatbot de “digite 1 para preços”. Ele entende frases normais e se adapta à pergunta. O agente cuida do repetitivo. Você cuida do que só você sabe fazer.</p>
+      </div>
+    </section>
+
+    <section class="demo" id="teste">
+      <div class="wrap center">
+        <p class="kicker">Teste você mesmo</p>
+        <h2 class="section-title">Não acredite em mim. Teste.</h2>
+        <p class="lede">A melhor prova é ver funcionando. Oferecemos uma demonstração grátis, ao vivo, de 10 minutos, pelo WhatsApp. Sem compromisso.</p>
+        <ul class="demo-list">
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Fazer as perguntas que seus clientes fazem.</span></li>
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Tentar confundir o agente.</span></li>
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Ver como ele passa a conversa para uma pessoa.</span></li>
+          <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="rgba(37,211,102,0.16)"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Tirar todas as suas dúvidas.</span></li>
+        </ul>
+        <div class="cta-pair">
+          <a class="btn btn-lg" href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20meu%20teste%20gr%C3%A1tis%20do%20agente%20de%20IA%20no%20WhatsApp." target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Quero testar no meu WhatsApp</a>
+          <a class="btn btn-lg" href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20saber%20mais%20sobre%20o%20agente%20de%20IA%20para%20o%20meu%20WhatsApp." target="_blank" rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Falar no WhatsApp</a>
+        </div>
+        <p class="note" style="margin-top:16px">Você testa, vê e decide. Simples assim.</p>
+      </div>
+    </section>
+
+    <section class="offer" id="oferta">
+      <div class="wrap">
+        <div class="offer-card" id="oferta-card">
+          <p class="kicker">Investimento</p>
+          <h2 class="section-title visually-hidden">Investimento</h2>
+          <div class="pay-options">
+            <div class="pay-option-featured">
+              <span class="pay-badge">Pix parcelado</span>
+              <p class="price">Entrada de R$ 997</p>
+              <p class="price-installments">+ 5x de R$ 892,53</p>
+            </div>
+            <p class="pay-or">ou</p>
+            <p class="price-cash">R$ 4.997 à vista</p>
+          </div>
+          <p style="font-weight:700;margin-bottom:10px">O que está incluso</p>
+          <ul class="checks">
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#E8FBF0"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>responde na hora, de dia, de noite e no fim de semana;</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#E8FBF0"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>tira as dúvidas mais comuns;</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#E8FBF0"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>pega nome e interesse do cliente;</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#E8FBF0"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>passa a conversa pra sua equipe quando precisa de gente.</span></li>
+            <li><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#E8FBF0"/><path d="M7 12.5 10.2 16 17 8.5" stroke="#25D366" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A Trillion configura o agente com todo o suporte e a mentalidade da casa, para ele funcionar e trazer o resultado que cada cliente quer, focado na dor de cada um.</span></li>
+          </ul>
+          <a class="btn btn-lg btn-full" href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20contratar%20o%20agente%20de%20IA." target="_blank" rel="noopener noreferrer">Quero contratar a AprumAI</a>
+          <p class="offer-note">Garantia de 20 dias úteis: se não fizer sentido pra você, devolvemos seu dinheiro.</p>
+        </div>
+
+        <div class="guarantee-row" id="garantia">
+          <div class="seal" aria-hidden="true"><span>20 dias úteis</span></div>
+          <div>
+            <p class="kicker">Garantia</p>
+            <h2 class="section-title" style="margin-bottom:8px">Garantia de 20 dias úteis</h2>
+            <p>Garantia de 20 dias úteis: se não fizer sentido pra você, devolvemos seu dinheiro.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq" id="faq">
+      <div class="wrap">
+        <p class="kicker">Dúvidas</p>
+        <h2 class="section-title">Perguntas frequentes</h2>
+        <div class="accordion">
+          <details open>
+            <summary>O robô vai falar besteira?</summary>
+            <p>Ele responde com as informações que você aprovar e passa pra sua equipe quando o assunto pede uma pessoa. Quando não sabe, ele chama você.</p>
+          </details>
+          <details>
+            <summary>Preciso entender de tecnologia?</summary>
+            <p>Não. A gente configura tudo. Você passa as informações da sua empresa. A configuração fica com a gente.</p>
+          </details>
+          <details>
+            <summary>Meu cliente prefere falar com gente?</summary>
+            <p>O agente resolve o simples e as perguntas repetidas. A conversa importante continua com você.</p>
+          </details>
+          <details>
+            <summary>Funciona no meu WhatsApp?</summary>
+            <p class="pending-answer">[Confirmar com a Implantação: WhatsApp Business normal ou API.]</p>
+          </details>
+          <details>
+            <summary>Quanto tempo leva pra ficar pronto?</summary>
+            <p>De 10 a 20 dias úteis para o agente contratado ficar pronto.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="final" id="cta-final">
+      <div class="wrap">
+        <h2>Veja funcionando antes de decidir.</h2>
+        <a class="btn btn-lg" href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20contratar%20o%20agente%20de%20IA." target="_blank" rel="noopener noreferrer">Quero contratar a AprumAI</a>
+        <p>
+          <a class="btn btn-lg" href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20meu%20teste%20gr%C3%A1tis%20do%20agente%20de%20IA%20no%20WhatsApp." target="_blank" rel="noopener noreferrer">Quero meu teste grátis</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p><strong>AprumAI</strong></p>
+      <p>Uma oferta da Trillion Ferrara / grupo JHF</p>
+      <p>WhatsApp <a href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20saber%20mais%20sobre%20o%20agente%20de%20IA%20para%20o%20meu%20WhatsApp." target="_blank" rel="noopener noreferrer">(44) 99148-7105</a></p>
+      <p class="legal">
+        <a href="#privacidade" id="privacidade">Política de Privacidade</a>
+        <span> — [texto da política a inserir]</span>
+      </p>
+      <p class="legal">CNPJ 66.397.680/0001-37</p>
+    </div>
+  </footer>
+
+  <a class="fab" href="https://wa.me/5544991487105?text=Ol%C3%A1%2C%20Jose%21%20Vim%20pela%20p%C3%A1gina%20da%20AprumAI%20e%20quero%20saber%20mais%20sobre%20o%20agente%20de%20IA%20para%20o%20meu%20WhatsApp." target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </a>
+</body>
+</html>
